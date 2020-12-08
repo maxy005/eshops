@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load cart %}
+{% load currency %}
+  <div class="container-fluid mt-3">
+  <div class="row">
+  <!--filter-->
+    <div class="col-lg-3 mx-auto ">
+      <div class="list-group">
+          {% for category in categorys %}
+  <a href="/?category={{category.id}}" class="list-group-item list-group-item-action active">
+    {{category.name}}
+
+
+  </a>
+          {% endfor %}
+  </div>
+
+
+
+    </div>
+
+
+    <div id="product" class="col-lg-9 mx-auto">
+        <div class="row mx-auto">
+      {% for x in products%}
+    <div class="card mx-auto" style="width: 18rem;" id={{x.id}}>
+
+  <img src="{{x.image.url}}" class="card-img-top " alt="...">
+
+  <div class="card-body">
+    <h5 class="card-title">{{x.name}}</h5>
+    <p class="card-text">{{x.description}}</p>
+    <p class="card-text">{{x.price|currencys}}</p>
+
+
+   <!-- {{x|is_in_cart:request.session.cart}} -->
+
+
+  </div>
+      <div class="card-footer  no-gutters p-0">
+        {%if x|is_in_cart:request.session.cart %}
+         <div class="row no-gutters" >
+            <form action="/" type="text" method="post" class="col-2" >
+                    {% csrf_token %}
+                <input hidden type="text" name="product" value="{{x.id}}">
+                <input hidden type="text" name="remove" value="True">
+            <input type="submit" value=" - " class=" btn btn-block  btn-secondary">
+            </form>
+            <div class="text-center col">{{x|cart_quantity:request.session.cart}} in cart</div>
+            <form action="/" type="text" method="post" class="col-2" >
+                    {% csrf_token %}
+                <input hidden type="text" name="product" value="{{x.id}}">
+            <input type="submit" value=" + " class=" btn btn-block  btn-secondary">
+            </form>
+          </div>
+
+        {% else %}
+
+
+        <form action="/#{{x.id}}" method="POST" class="btn-block">
+      {% csrf_token %}
+      <input hidden type="text" name="product" value="{{x.id}}">
+      <input type="submit" class=" btn btn-primary form-control" value="add to cart">
+    </form>
+      {% endif %}
+
+
+        </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+
+
+    </div>
+
+
+
+
+  </div>
+    <!-- Optional JavaScript; choose one of the two! -->
+  </div>
+{% endblock %}
